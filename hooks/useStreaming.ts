@@ -21,7 +21,7 @@ export function useStreaming() {
 
         try {
             for await (const event of stream) {
-                // 检查是否被取消
+                // 如果发现外部主动触发了 abort，立刻跳出流循环
                 if (abortRef.current?.signal.aborted) {
                     break;
                 }
@@ -41,30 +41,38 @@ export function useStreaming() {
                 }
 
                 if (event.type === "error") {
-                    callbacks.onError?.(event.message ?? "流式输出失败");
+                    callbacks.onError?.(event.message ?? "流式输出后端返回异常");
                 }
             }
-        } catch (error) {
-            // 如果是主动取消，不报错
-            if (error instanceof DOMException && error.name === "AbortError") {
-                console.log("流式输出已取消");
+        } catch (error: any) {
+            // 静默处理主动取消的错误（Fetch 请求中止会抛出 AbortError）
+            if (error.name === "AbortError" || abortRef.current?.signal.aborted) {
+                console.log("⏸️ 流式输出已由用户主动取消");
                 return;
             }
-            throw error;
+            console.error("❌ 流式请求捕获到未预期错误:", error);
+            callbacks.onError?.(error.message || "请求发生未知异常");
+        } finally {
+            // 清理状态
+            abortRef.current = null;
         }
     };
 
-    // 新增：启动新的 AbortController 并返回 signal
     const startAbort = useCallback(() => {
+        // 在发起新请求前，先取消上一次可能还在进行的请求
+        if (abortRef.current) {
+            abortRef.current.abort();
+        }
         abortRef.current = new AbortController();
         return abortRef.current.signal;
     }, []);
 
     const cancel = useCallback(() => {
-        abortRef.current?.abort();
-        abortRef.current = null;
+        if (abortRef.current) {
+            abortRef.current.abort();
+            abortRef.current = null;
+        }
     }, []);
 
-    // 确保返回 startAbort
     return { consume, startAbort, cancel };
 }

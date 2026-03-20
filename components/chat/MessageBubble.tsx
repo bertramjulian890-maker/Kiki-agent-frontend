@@ -79,7 +79,7 @@ export function MessageBubble({
                         ? 'bg-(--caramel-500)/90 text-(--paper-100) rounded-2xl rounded-tr-sm'
                         : isError
                             ? 'bg-red-50 text-red-700 border border-red-200 rounded-2xl rounded-tl-sm dark:bg-red-900/20'
-                            : 'bg-(--paper-100) text-(--charcoal-700) rounded-2xl rounded-tl-sm dark:bg-black/10'
+                            : 'bg-(--paper-100) text-(--charcoal-700) rounded-2xl rounded-tl-sm'
                         }`}
                 >
                     {isEditing ? (

@@ -29,7 +29,7 @@ export async function sendMessage(request: ChatRequest): Promise<ChatResponse> {
     }
 }
 
-// 流式对话（使用 EventSource 或 fetch）
+// 流式对话（安全且稳健的 SSE 解析）
 export async function* streamMessage(
     request: ChatRequest,
     signal?: AbortSignal
@@ -45,37 +45,57 @@ export async function* streamMessage(
     });
 
     if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
+        throw new Error(`HTTP 错误! 状态码: ${response.status}`);
     }
 
     const reader = response.body?.getReader();
     if (!reader) {
-        throw new Error('Response body is null');
+        throw new Error('响应体为空 (Response body is null)');
     }
 
     const decoder = new TextDecoder('utf-8');
     let buffer = '';
 
-    while (true) {
-        const { done, value } = await reader.read();
-        if (done) break;
+    try {
+        while (true) {
+            const { done, value } = await reader.read();
+            if (done) break;
 
-        buffer += decoder.decode(value, { stream: true });
+            // 将新接收到的字节块解码并追加到缓冲区
+            buffer += decoder.decode(value, { stream: true });
 
-        // 处理 SSE 格式的数据
-        const lines = buffer.split('\n\n');
-        buffer = lines.pop() || '';
+            // 查找完整的 SSE 消息边界（必须以两个换行符结尾）
+            let boundaryIndex = buffer.indexOf('\n\n');
 
-        for (const line of lines) {
-            if (line.startsWith('data: ')) {
-                const data = line.slice(6);
-                try {
-                    const chunk: StreamChunk = JSON.parse(data);
-                    yield chunk;
-                } catch {
-                    console.error("解析 SSE 数据失败:", data);
+            while (boundaryIndex !== -1) {
+                // 截取一个完整的报文块
+                const completeChunk = buffer.slice(0, boundaryIndex);
+                // 将缓冲区剩余的（可能是不完整的）数据保留下来
+                buffer = buffer.slice(boundaryIndex + 2);
+
+                // 解析这个完整的报文块
+                const lines = completeChunk.split('\n');
+                for (const line of lines) {
+                    if (line.startsWith('data: ')) {
+                        const data = line.slice(6).trim();
+                        // 兼容标准的 OpenAI 结束符
+                        if (data === '[DONE]') continue;
+                        if (!data) continue;
+
+                        try {
+                            const chunk: StreamChunk = JSON.parse(data);
+                            yield chunk;
+                        } catch (e) {
+                            console.error("解析单条 SSE 数据失败，已跳过:", data, e);
+                        }
+                    }
                 }
+                // 继续检查缓冲区内是否还有完整的报文块
+                boundaryIndex = buffer.indexOf('\n\n');
             }
         }
+    } finally {
+        // 确保读取器被正确释放
+        reader.releaseLock();
     }
 }
