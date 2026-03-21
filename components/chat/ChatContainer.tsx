@@ -49,7 +49,7 @@ export default function ChatContainer({
                   1. mx-auto max-w-3xl: 在宽屏下居中，保持最大宽度。
                   2. flex flex-col items-start: 🚀 关键！强制内部所有子元素默认靠左对齐。
                 */}
-                <div className="mx-auto max-w-3xl px-4 py-8 pb-32 flex flex-col items-start">
+                <div className="mx-auto w-full max-w-3xl px-4 py-8 pb-32">
                     <MessageList
                         messages={messages}
                         isLoading={isLoading}
