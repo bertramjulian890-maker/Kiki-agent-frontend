@@ -191,7 +191,7 @@ export function MessageBubble({
                 )}
 
                 {isUser && !message.isStreaming && onEdit && (
-                    <div className="opacity-0 group-hover:opacity-100 flex items-center gap-1.5 pl-2 transition-opacity duration-300" ref={menuRef}>
+                    <div className="opacity-100 md:opacity-0 md:group-hover:opacity-100 flex items-center justify-end gap-1.5 pr-1 pt-1 transition-opacity duration-300 w-full" ref={menuRef}>
                         <button
                             onClick={handleEdit}
                             className="p-1.5 rounded-md hover:bg-(--paper-300) text-(--charcoal-700)/40 hover:text-(--charcoal-700) transition-colors"
