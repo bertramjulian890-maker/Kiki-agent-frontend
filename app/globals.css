@@ -11,30 +11,12 @@
 @plugin "@tailwindcss/typography";
 
 @theme {
-    /* 注册一个名为 breath-slow 的动画类 (在 HTML 里用 animate-breath-slow 调用) */
     --animate-breath-slow: breath 2.5s ease-in-out infinite;
-}
 
-/* 原生的 CSS 关键帧定义 */
-@keyframes breath {
-
-    0%,
-    100% {
-        opacity: 0.4;
-    }
-
-    50% {
-        opacity: 1;
-    }
-}
-
-/* 💡 1. 定义 Tailwind v4 的主题映射 */
-@theme {
-    /* 使用 CSS @font-face 加载的字体，不依赖 next/font/local */
     --font-retro-serif: "MyRetroSerif", serif;
     --font-serif: "MyRetroSerif", serif;
 
-    /* 注册颜色 */
+    --color-paper-50: var(--paper-50);
     --color-paper-100: var(--paper-100);
     --color-paper-200: var(--paper-200);
     --color-paper-300: var(--paper-300);
@@ -42,40 +24,33 @@
     --color-caramel-500: var(--caramel-500);
 }
 
-/* 💡 2. 定义复古配色的底层 CSS 变量 */
-:root {
-    /* 更米黄、更复古的背景 */
-    --paper-100: #F2EADC;
-    --paper-200: #EAE0CD;
-    /* 基于背景色加深的、有质感的线条色 */
-    --paper-300: #D6C9B0;
-
-    --charcoal-700: #2D2D2D;
-    /* 故宫正红 */
-    --caramel-500: #B32428;
+@keyframes breath {
+    0%, 100% { opacity: 0.5; transform: scale(0.98); }
+    50% { opacity: 1; transform: scale(1); }
 }
 
-/* globals.css */
+:root {
+    /* 极致简约的米黄宣纸底色 */
+    --paper-50: #FDFBF7;
+    --paper-100: #F8F5EE;   /* 侧边栏微深区分 */
+    --paper-200: #EFEBDF;   /* HOVER态 */
+    --paper-300: #E2DCCB;
+
+    --charcoal-700: #2C2825; /* 温润的黑棕色字 */
+    --caramel-500: #C92A2A;  /* 点睛之笔：优雅砖红 */
+}
 
 .dark {
-    /* 💡 背景：从纯黑改为带有一点点墨水蓝的深色，更深邃 */
-    --paper-100: #0f1115;
-    /* 深邃底色 */
-    --paper-200: #1a1d23;
-    /* 气泡背景，略显浮现 */
-    --paper-300: #2a2f37;
-    /* 边框与分割线 */
+    /* 黑夜模式采用温润的无边缘碳黑纸底色 */
+    --paper-50: #121110;
+    --paper-100: #171615;
+    --paper-200: #1F1D1C;
+    --paper-300: #2C2927;
 
-    /* 💡 文字：从刺眼的纯白改为柔和的灰白，保护视力 */
-    --charcoal-700: #b4c5df;
-
-    /* 💡 主题色：把难看的棕色换成“复古金/琥珀色” */
-    /* 这个颜色在深色背景下非常有质感，像深夜里的烛火 */
-    --caramel-500: #db5959;
-    /* 或者用 #f59e0b 偏橘一点 */
+    --charcoal-700: #E8E4DB;
+    --caramel-500: #E03131; 
 }
 
-/* 💡 4. 全局原生样式 */
 * {
     box-sizing: border-box;
 }
@@ -91,29 +66,16 @@ body {
     height: 100%;
     overflow: hidden;
     font-family: "MyRetroSerif", serif;
-    background-color: var(--paper-100);
+    background-color: var(--paper-50);
     color: var(--charcoal-700);
-}
-
-body {
-    background-image:
-        radial-gradient(circle at 15% 20%, rgba(179, 36, 40, 0), transparent 45%),
-        radial-gradient(circle at 85% 95%, rgba(38, 163, 172, 0), transparent 60%);
+    /* 取消繁杂元素，保留极致纯净背景 */
     background-attachment: fixed;
     overscroll-behavior-y: none;
+    -webkit-font-smoothing: antialiased;
 }
 
-/* 滚动条美化 */
+/* 隐藏滚动条，用呼吸感布局取代 */
 ::-webkit-scrollbar {
-    width: 8px;
-    height: 8px;
-}
-
-::-webkit-scrollbar-thumb {
-    background: var(--paper-300);
-    border-radius: 999px;
-}
-
-::-webkit-scrollbar-track {
+    width: 0px;
     background: transparent;
 }

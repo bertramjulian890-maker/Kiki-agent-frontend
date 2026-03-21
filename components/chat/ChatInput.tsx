@@ -13,7 +13,7 @@ export function ChatInput({
     isLoading,
     onSend,
     onStop,
-    placeholder = "输入消息...",
+    placeholder = "给 Kiki 发送消息...",
 }: ChatInputProps) {
     const [value, setValue] = useState("");
     const textareaRef = useRef<HTMLTextAreaElement>(null);
@@ -34,9 +34,7 @@ export function ChatInput({
         if (!value.trim() || isLoading) return;
         const text = value.trim();
         setValue("");
-        if (textareaRef.current) {
-            textareaRef.current.style.height = 'auto';
-        }
+        if (textareaRef.current) textareaRef.current.style.height = 'auto';
         await onSend(text);
     };
 
@@ -48,10 +46,9 @@ export function ChatInput({
     };
 
     return (
-        <div className="pb-[env(safe-area-inset-bottom)] relative">
-            <div className="mx-auto flex w-full max-w-2xl items-end gap-2 rounded-[28px] border border-(--paper-300) bg-(--paper-100)/85 backdrop-blur-xl p-1.5 shadow-[0_8px_30px_rgb(0,0,0,0.06)] transition-all dark:bg-black/50">
+        <div className="pb-6 relative w-full flex justify-center drop-shadow-[0_12px_44px_rgba(0,0,0,0.06)]">
+            <div className="w-full flex items-end gap-3 rounded-[32px] bg-(--paper-50)/80 border border-[rgba(248,245,238,0.3)] backdrop-blur-2xl p-2 pl-4 transition-all">
 
-                {/* 💡 修复：恢复输入框的宽敞内边距和 16px 字体 */}
                 <textarea
                     ref={textareaRef}
                     value={value}
@@ -59,15 +56,14 @@ export function ChatInput({
                     onKeyDown={handleKeyDown}
                     placeholder={placeholder}
                     rows={1}
-                    className="max-h-40 min-h-[48px] flex-1 resize-none overflow-hidden bg-transparent pl-4 pr-2 py-3 text-[16px] leading-relaxed text-(--charcoal-700) outline-none placeholder:text-(--charcoal-700)/40 transition-all"
+                    className="max-h-40 min-h-[52px] flex-1 resize-none overflow-hidden bg-transparent py-4 text-[16px] font-serif leading-relaxed text-(--charcoal-700) outline-none placeholder:text-(--charcoal-700)/30 transition-all"
                     disabled={isLoading}
                 />
 
-                {/* 💡 修复：将按钮恢复为正圆形，提升精致感 */}
                 {isLoading && onStop ? (
                     <button
                         onClick={onStop}
-                        className="mb-1 mr-1 flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-red-500 hover:bg-red-600 text-white transition-colors"
+                        className="mb-1.5 mr-1 flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-red-400 hover:bg-red-500 text-white transition-all shadow-sm"
                         title="停止生成"
                     >
                         <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><rect x="6" y="6" width="12" height="12" rx="2" /></svg>
@@ -77,11 +73,11 @@ export function ChatInput({
                         onClick={handleSubmit}
                         disabled={!value.trim()}
                         className={`
-                            mb-1 flex h-10 w-10 shrink-0 items-center justify-center 
-                            transition-all duration-300 rounded-full
+                            mb-1.5 mr-1 flex h-11 w-11 shrink-0 items-center justify-center 
+                            transition-all duration-300 rounded-full select-none
                             ${!value.trim() 
-                                ? "text-(--caramel-500)/40 hover:text-(--caramel-500)/60" 
-                                : "text-(--paper-100) bg-(--caramel-500) hover:bg-(--caramel-600) shadow-sm hover:scale-105 active:scale-95"}
+                                ? "bg-[rgba(226,220,203,0.4)] text-(--charcoal-700)/30" 
+                                : "bg-(--caramel-500) text-white shadow-[0_4px_14px_rgba(201,42,42,0.3)] hover:scale-105 active:scale-95"}
                         `}
                     >
                         <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className={`${value.trim() ? "translate-x-[-1px] translate-y-[1px]" : ""}`}>
