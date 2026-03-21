@@ -46,24 +46,16 @@ export default function Page() {
     const { resolvedTheme, setTheme } = useTheme();
     const [mounted, setMounted] = useState(false);
 
+    // 💡 修复 SSR 水合：仅在挂载后标记为 true [cite: 13, 15]
     useEffect(() => {
         setMounted(true);
     }, []);
 
     const isDark = mounted ? resolvedTheme === "dark" : false;
 
+    // 🚀 修复：将之前的 switch 逻辑移动到真正的函数体内
     const toggleTheme = () => {
-        {
-            mounted ? (
-                isDark ? (
-                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-(--charcoal-700)"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line></svg>
-                ) : (
-                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-(--charcoal-700)"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>
-                )
-            ) : (
-                <div className="w-5 h-5" /> // 🚀 占位符：SSR 时只渲染一个相同大小的空盒子，防止按钮塌陷
-            )
-        }
+        setTheme(isDark ? "light" : "dark");
     };
 
     const toggleSidebar = () => {
@@ -76,13 +68,14 @@ export default function Page() {
         }
     };
 
-    // 💡 智能同步：只在空闲或打字结束时同步，彻底拒绝高频重绘！
+    // 💡 智能同步：增加防空判断，解决切换对话时的覆写风险 [cite: 25, 29]
     useEffect(() => {
         if (!currentConversation) return;
         if (isLoading) return;
+
+        // 如果 useChat 消息为空但数据库有数据，说明正在加载中，跳过同步 [cite: 28]
         if (messages.length === 0 && currentConversation.messages.length > 0) return;
 
-        // 当打字结束，isLoading 变成 false 时，再把最终完整的话同步给侧边栏
         updateConversationMessages(currentConversation.id, messages);
     }, [messages, isLoading, currentConversation?.id, updateConversationMessages]);
 
@@ -150,22 +143,27 @@ export default function Page() {
                                 className="p-2 rounded-lg hover:bg-(--paper-200) transition-colors"
                                 title={isDark ? "切换到浅色模式" : "切换到深色模式"}
                             >
-                                {isDark ? (
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-(--charcoal-700)">
-                                        <circle cx="12" cy="12" r="5"></circle>
-                                        <line x1="12" y1="1" x2="12" y2="3"></line>
-                                        <line x1="12" y1="21" x2="12" y2="23"></line>
-                                        <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
-                                        <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
-                                        <line x1="1" y1="12" x2="3" y2="12"></line>
-                                        <line x1="21" y1="12" x2="23" y2="12"></line>
-                                        <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
-                                        <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
-                                    </svg>
+                                {/* 💡 局部处理挂载状态，防止图标水合错误  */}
+                                {mounted ? (
+                                    isDark ? (
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-(--charcoal-700)">
+                                            <circle cx="12" cy="12" r="5"></circle>
+                                            <line x1="12" y1="1" x2="12" y2="3"></line>
+                                            <line x1="12" y1="21" x2="12" y2="23"></line>
+                                            <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+                                            <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+                                            <line x1="1" y1="12" x2="3" y2="12"></line>
+                                            <line x1="21" y1="12" x2="23" y2="12"></line>
+                                            <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+                                            <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+                                        </svg>
+                                    ) : (
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-(--charcoal-700)">
+                                            <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+                                        </svg>
+                                    )
                                 ) : (
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-(--charcoal-700)">
-                                        <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
-                                    </svg>
+                                    <div className="w-5 h-5" /> // 占位符 
                                 )}
                             </Button>
                         </div>

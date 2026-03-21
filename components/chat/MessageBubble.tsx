@@ -69,54 +69,75 @@ export function MessageBubble({
     const isUser = message.role === 'user';
     const isError = message.content.includes('错误') || message.content.includes('fail');
 
+    // 🚀 核心判断：当前是否处于“只思考，无正文”的真空期
+    const isThinkingOnly = !isUser && message.isThinking && !message.content;
+
     return (
         <div className={`flex w-full items-start gap-4 mb-2 ${isUser ? 'justify-end' : 'justify-start'}`}>
             <div className={`group relative max-w-[85%] flex flex-col gap-1.5 ${isUser ? 'items-end' : 'items-start'}`}>
 
-                {/* 💡 修复：恢复气泡的大圆角、大内边距和高级阴影 */}
-                <div
-                    className={`relative px-3 py-2 text-[15px] shadow-sm transition-colors ${isUser
-                        ? 'bg-(--caramel-500)/90 text-(--paper-100) rounded-2xl rounded-tr-sm'
-                        : isError
-                            ? 'bg-red-50 text-red-700 border border-red-200 rounded-2xl rounded-tl-sm dark:bg-red-900/20'
-                            : 'bg-(--paper-100) text-(--charcoal-700) rounded-2xl rounded-tl-sm'
-                        }`}
-                >
-                    {isEditing ? (
-                        <div className="flex flex-col gap-2">
-                            <textarea
-                                value={editValue}
-                                onChange={(e) => setEditValue(e.target.value)}
-                                className="w-full bg-transparent border border-(--paper-300) rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-(--caramel-500) resize-none"
-                                rows={3}
-                                autoFocus
-                            />
-                            <div className="flex justify-end gap-2">
-                                <button
-                                    onClick={handleCancelEdit}
-                                    className="px-3 py-1 text-xs rounded-md hover:bg-(--paper-300) text-(--charcoal-700) transition-colors"
-                                >
-                                    取消
-                                </button>
-                                <button
-                                    onClick={handleSaveEdit}
-                                    className="px-3 py-1 text-xs rounded-md bg-(--caramel-500) hover:bg-(--caramel-600) text-white transition-colors"
-                                >
-                                    保存
-                                </button>
+                {/* 🚀 视觉优化 1：如果只有思考状态没有正文，彻底隐藏这个带背景色的方块，防止出现空心气泡 */}
+                {!isThinkingOnly && (
+                    <div
+                        className={`relative px-3 py-2 text-[15px] shadow-sm transition-colors ${isUser
+                            ? 'bg-(--caramel-500)/90 text-(--paper-100) rounded-2xl rounded-tr-sm'
+                            : isError
+                                ? 'bg-red-50 text-red-700 border border-red-200 rounded-2xl rounded-tl-sm dark:bg-red-900/20'
+                                : 'bg-(--paper-100) text-(--charcoal-700) rounded-2xl rounded-tl-sm'
+                            }`}
+                    >
+                        {isEditing ? (
+                            <div className="flex flex-col gap-2">
+                                <textarea
+                                    value={editValue}
+                                    onChange={(e) => setEditValue(e.target.value)}
+                                    className="w-full bg-transparent border border-(--paper-300) rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-(--caramel-500) resize-none"
+                                    rows={3}
+                                    autoFocus
+                                />
+                                <div className="flex justify-end gap-2">
+                                    <button
+                                        onClick={handleCancelEdit}
+                                        className="px-3 py-1 text-xs rounded-md hover:bg-(--paper-300) text-(--charcoal-700) transition-colors"
+                                    >
+                                        取消
+                                    </button>
+                                    <button
+                                        onClick={handleSaveEdit}
+                                        className="px-3 py-1 text-xs rounded-md bg-(--caramel-500) hover:bg-(--caramel-600) text-white transition-colors"
+                                    >
+                                        保存
+                                    </button>
+                                </div>
                             </div>
-                        </div>
-                    ) : (
-                        <MessageContent
-                            content={message.content}
-                            isStreaming={message.isStreaming}
-                            isUser={isUser}
-                        />
-                    )}
-                </div>
+                        ) : (
+                            <MessageContent
+                                content={message.content}
+                                isStreaming={message.isStreaming}
+                                isUser={isUser}
+                            />
+                        )}
+                    </div>
+                )}
 
-                {/* 💡 修复：恢复 !message.isStreaming，打字时隐藏菜单 */}
-                {!isUser && !message.isStreaming && (
+                {/* 🚀 视觉优化 2：极致小巧的思考动画，对齐在菜单栏的位置 */}
+                {message.isThinking && (
+                    <div className="flex items-center gap-1.5 pl-2 h-[26px] select-none">
+                        <div className="flex items-center gap-[3px]">
+                            {/* 圆点尺寸从 w-1.5 缩小到了 w-1，极其精致 */}
+                            <span className="w-1 h-1 rounded-full bg-(--charcoal-700)/40 animate-breath-slow delay-0"></span>
+                            <span className="w-1 h-1 rounded-full bg-(--charcoal-700)/40 animate-breath-slow delay-150"></span>
+                            <span className="w-1 h-1 rounded-full bg-(--charcoal-700)/40 animate-breath-slow delay-300"></span>
+                        </div>
+                        {/* 文字尺寸设为 text-xs，颜色调淡 */}
+                        <span className="text-xs text-(--charcoal-700)/40 italic font-serif tracking-wide animate-breath-slow">
+                            {message.thinkingMessage || "正在思考..."}
+                        </span>
+                    </div>
+                )}
+
+                {/* 原本的菜单栏逻辑：只有在【不打字】且【不思考】时才允许 hover 显示 */}
+                {!isUser && !message.isStreaming && !message.isThinking && (
                     <div className="opacity-0 group-hover:opacity-100 flex items-center gap-1.5 pl-2 transition-opacity duration-300" ref={menuRef}>
                         <button
                             onClick={handleCopy}
@@ -154,7 +175,6 @@ export function MessageBubble({
 
                 {isUser && !message.isStreaming && onEdit && (
                     <div className="opacity-0 group-hover:opacity-100 flex items-center gap-1.5 pl-2 transition-opacity duration-300" ref={menuRef}>
-                        {/* 编辑按钮 - 用户消息专用 */}
                         <button
                             onClick={handleEdit}
                             className="p-1.5 rounded-md hover:bg-(--paper-300) text-(--charcoal-700)/40 hover:text-(--charcoal-700) transition-colors"
@@ -163,7 +183,6 @@ export function MessageBubble({
                             <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg>
                         </button>
 
-                        {/* 删除按钮 */}
                         {onDelete && (
                             <button
                                 onClick={() => onDelete(message)}
@@ -175,8 +194,6 @@ export function MessageBubble({
                         )}
                     </div>
                 )}
-
-
 
             </div>
         </div>

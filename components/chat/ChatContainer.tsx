@@ -1,7 +1,6 @@
 "use client";
 
 import type { Message } from "@/types/chat";
-import { Button } from "@/components/ui/Button";
 import { MessageList } from "./MessageList";
 import { ChatInput } from "./ChatInput";
 
@@ -37,26 +36,44 @@ export default function ChatContainer({
     onResetConversation,
 }: ChatContainerProps) {
     return (
-        <main className="flex h-full flex-1 flex-col overflow-hidden text-var(--charcoal-700)">
-            <header className="sticky top-0 z-20  border-var(--caramel-500) bg-color:var(--paper-100)/0 px-4 py-3 backdrop-blur">
+        <main className="flex h-full flex-1 flex-col overflow-hidden text-(--charcoal-700)">
+            {/* Header 保持原样 */}
+            <header className="sticky top-0 z-20 border-b border-(--paper-300) bg-(--paper-100)/90 px-4 py-3 backdrop-blur transition-colors duration-300">
                 <div className="mx-auto flex w-full max-w-2xl items-center justify-between">
                 </div>
             </header>
 
-            <section className="min-h-0 flex-1 overflow-hidden">
-                <MessageList
-                    messages={messages}
-                    isLoading={isLoading}
-                    error={error}
-                    onCopy={onCopyMessage}
-                    onRegenerate={onRegenerateMessage}
-                    onDelete={onDeleteMessage}
-                    onRetry={onRetry}
-                    onEdit={onEditMessage}
-                />
+            {/* 🚀 核心布局修复：确保滚动区域靠左，且有正确的内边距 */}
+            <section className="min-h-0 flex-1 overflow-y-auto overflow-x-hidden custom-scrollbar">
+                {/* 这里是消息列表的容器：
+                  1. mx-auto max-w-3xl: 在宽屏下居中，保持最大宽度。
+                  2. flex flex-col items-start: 🚀 关键！强制内部所有子元素默认靠左对齐。
+                */}
+                <div className="mx-auto max-w-3xl px-4 py-8 flex flex-col items-start">
+                    <MessageList
+                        messages={messages}
+                        isLoading={isLoading}
+                        error={error}
+                        onCopy={onCopyMessage}
+                        onRegenerate={onRegenerateMessage}
+                        onDelete={onDeleteMessage}
+                        onRetry={onRetry}
+                        onEdit={onEditMessage}
+                    />
+                </div>
             </section>
 
-            <ChatInput isLoading={isLoading} onSend={onSend} onStop={onStop} placeholder="输入消息..." />
+            {/* Input 保持原样 */}
+            <footer className="p-4 border-t border-(--paper-300) bg-(--paper-100)">
+                <div className="mx-auto max-w-3xl">
+                    <ChatInput
+                        isLoading={isLoading}
+                        onSend={onSend}
+                        onStop={onStop}
+                        placeholder="输入消息..."
+                    />
+                </div>
+            </footer>
         </main>
     );
 }

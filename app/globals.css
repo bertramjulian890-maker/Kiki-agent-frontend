@@ -8,6 +8,24 @@
 
 @plugin "@tailwindcss/typography";
 
+@theme {
+    /* 注册一个名为 breath-slow 的动画类 (在 HTML 里用 animate-breath-slow 调用) */
+    --animate-breath-slow: breath 2.5s ease-in-out infinite;
+}
+
+/* 原生的 CSS 关键帧定义 */
+@keyframes breath {
+
+    0%,
+    100% {
+        opacity: 0.4;
+    }
+
+    50% {
+        opacity: 1;
+    }
+}
+
 /* 💡 1. 定义 Tailwind v4 的主题映射 */
 @theme {
     /* 使用你刚才定义的本地字体变量 */
