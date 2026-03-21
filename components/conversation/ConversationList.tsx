@@ -1,5 +1,6 @@
 "use client";
 
+import { useRef } from "react";
 import type { Conversation } from "@/types/chat";
 import { ConversationItem } from "./ConversationItem";
 import { NewConversationButton } from "./NewConversationButton";
@@ -25,10 +26,28 @@ export function ConversationList({
     onTogglePinConversation,
     onDuplicateConversation,
     onCreateConversation,
+    onExportConversations,
 }: ConversationListProps) {
+    const fileInputRef = useRef<HTMLInputElement>(null);
+
+    const handleImportClick = () => {
+        fileInputRef.current?.click();
+    };
+
+    const handleFileChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
+        const file = event.target.files?.[0];
+        if (file) {
+            try {
+                console.log('Importing file:', file.name);
+            } catch (error) {
+                console.error('Import failed:', error);
+            }
+        }
+        event.target.value = '';
+    };
+
     return (
         <div className="h-full flex flex-col bg-(--paper-100) w-72 shadow-[4px_0_24px_rgba(0,0,0,0.02)] z-10 transition-colors">
-            {/* 顶部体验呼吸感布局，移除导入导出按键 */}
             <div className="p-6 pb-4 flex flex-col gap-4">
                 <NewConversationButton onClick={onCreateConversation} />
             </div>

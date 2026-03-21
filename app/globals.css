@@ -67,6 +67,9 @@
     --fav-5: #DD9900;
     --fav-6: #88929F;
     --fav-7: #B8C5C9;
+
+    /* 💡 默认模式：Hero 文本颜色 (砖红) */
+    --hero-text: var(--caramel-500);
 }
 
 .dark {
@@ -76,8 +79,11 @@
     --paper-200: #1F1D1C;
     --paper-300: #2C2927;
 
-    --charcoal-700: #E8E4DB;
+    --charcoal-700: #B8C5C9;
     --caramel-500: #E03131;
+
+    /* 💡 夜间模式：Hero 文本颜色 (--fav-1) */
+    --hero-text: #379CB6;
 }
 
 * {

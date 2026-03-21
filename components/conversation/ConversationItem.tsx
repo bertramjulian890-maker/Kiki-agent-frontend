@@ -58,14 +58,16 @@ export function ConversationItem({
     return (
         <div
             className={`group relative flex items-center gap-2 p-3 rounded-lg mb-1 transition-colors cursor-pointer ${isSelected
-                ? 'bg-(--caramel-500)/10 border border-(--caramel-500)'
-                : 'hover:bg-(--paper-200) border border-transparent'
+                ? 'bg-(--caramel-500)/10 shadow-[0_2px_10px_rgba(201,42,42,0.02)]'
+                : 'hover:bg-(--paper-200)'
                 }`}
             onClick={onSelect}
             onDoubleClick={handleStartEditing}
         >
             {/* 对话图标 */}
-            <div className="flex-shrink:0 w-8 h-8 rounded-full bg-(--paper-200) flex items-center justify-center">
+            <div className={`flex-shrink:0 w-8 h-8 rounded-full flex items-center justify-center transition-colors ${
+                isSelected ? 'bg-(--fav-4)/10' : 'bg-(--paper-200)'
+            }`}>
                 <svg
                     xmlns="http://www.w3.org/2000/svg"
                     width="16"
@@ -76,7 +78,7 @@ export function ConversationItem({
                     strokeWidth="2"
                     strokeLinecap="round"
                     strokeLinejoin="round"
-                    className="text-(--charcoal-700)"
+                    className={`transition-colors ${isSelected ? 'text-(--fav-4)' : 'text-(--charcoal-700)'}`}
                 >
                     <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
                 </svg>
@@ -96,7 +98,7 @@ export function ConversationItem({
                     />
                 ) : (
                     <div className="text-sm truncate">
-                        <span className={`${isSelected ? 'text-(--caramel-500) font-medium' : 'text-(--charcoal-700)'
+                        <span className={`${isSelected ? 'text-(--fav-4) font-medium' : 'text-(--charcoal-700)'
                             }`}>
                             {conversation.title}
                         </span>

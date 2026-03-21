@@ -32,7 +32,7 @@ export function MessageList({
                     <h2 className="text-8xl font-serif font-medium tracking-tight text-(--charcoal-700) mb-6">
                         Kiki
                     </h2>
-                    <p className="text-2xl font-serif text-(--caramel-500)/90 leading-relaxed mb-12">
+                    <p className="text-2xl font-serif leading-relaxed mb-12" style={{ color: 'var(--hero-text)' }}>
                         今天心情美丽吗？<br />在这片纯净的空间里，我会一直静静陪你。
                     </p>
 
