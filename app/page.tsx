@@ -101,7 +101,7 @@ export default function Page() {
     };
 
     return (
-        <div className="absolute inset-0 flex overflow-hidden bg-(--paper-100) transition-colors duration-300">
+        <div className="fixed inset-0 flex overflow-hidden bg-(--paper-100) transition-colors duration-300">
             <div
                 className={`fixed inset-y-0 left-0 z-40 w-72 bg-(--paper-100) transform transition-transform duration-300 ease-in-out md:translate-x-0 md:static md:block ${isSidebarOpen ? "translate-x-0" : "-translate-x-full"
                     }`}
