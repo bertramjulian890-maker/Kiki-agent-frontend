@@ -35,24 +35,24 @@ export function useConversations() {
             const loaded = await loadConversations<Conversation>();
             const currentId = await loadCurrentConversationId();
 
-            if (loaded.length === 0) {
-                const newId = generateId();
-                const newConv: Conversation = {
-                    id: newId,
-                    title: "新对话",
-                    messages: [],
-                    createdAt: new Date(),
-                    updatedAt: new Date(),
-                    isPinned: false,
-                };
-                setConversations([newConv]);
-                setCurrentConversationId(newId);
-                await saveConversations([newConv]);
-                await saveCurrentConversationId(newId);
-            } else {
-                setConversations(loaded);
-                setCurrentConversationId(currentId || loaded[0].id);
-            }
+            const loadedClean = loaded.filter(c => c.messages.length > 0);
+            
+            const newId = generateId();
+            const newConv: Conversation = {
+                id: newId,
+                title: "新对话",
+                messages: [],
+                createdAt: new Date(),
+                updatedAt: new Date(),
+                isPinned: false,
+            };
+
+            setConversations([newConv, ...loadedClean]);
+            setCurrentConversationId(newId);
+            
+            // 立刻覆盖保存一次，防止刷新带来无用的空对话堆积
+            await saveConversations([newConv, ...loadedClean]);
+            await saveCurrentConversationId(newId);
             setIsLoading(false);
         };
         initStorage();

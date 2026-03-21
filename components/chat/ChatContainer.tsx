@@ -36,7 +36,7 @@ export default function ChatContainer({
     onResetConversation,
 }: ChatContainerProps) {
     return (
-        <main className="flex h-full flex-1 flex-col overflow-hidden text-(--charcoal-700)">
+        <main className="relative flex h-full flex-1 flex-col overflow-hidden text-(--charcoal-700)">
             {/* Header 保持原样 */}
             <header className="sticky top-0 z-20 border-b border-(--paper-300) bg-(--paper-100)/90 px-4 py-3 backdrop-blur transition-colors duration-300">
                 <div className="mx-auto flex w-full max-w-2xl items-center justify-between">
@@ -49,7 +49,7 @@ export default function ChatContainer({
                   1. mx-auto max-w-3xl: 在宽屏下居中，保持最大宽度。
                   2. flex flex-col items-start: 🚀 关键！强制内部所有子元素默认靠左对齐。
                 */}
-                <div className="mx-auto max-w-3xl px-4 py-8 flex flex-col items-start">
+                <div className="mx-auto max-w-3xl px-4 py-8 pb-32 flex flex-col items-start">
                     <MessageList
                         messages={messages}
                         isLoading={isLoading}
@@ -63,9 +63,9 @@ export default function ChatContainer({
                 </div>
             </section>
 
-            {/* Input 保持原样 */}
-            <footer className="p-4 border-t border-(--paper-300) bg-(--paper-100)">
-                <div className="mx-auto max-w-3xl">
+            {/* Input 改为悬浮卡片 */}
+            <footer className="absolute bottom-6 left-0 right-0 px-4 z-10 pointer-events-none">
+                <div className="mx-auto max-w-3xl pointer-events-auto">
                     <ChatInput
                         isLoading={isLoading}
                         onSend={onSend}

@@ -48,8 +48,8 @@ export function ChatInput({
     };
 
     return (
-        <div className="bg-(--paper-100) px-4 pb-[calc(env(safe-area-inset-bottom)+20px)] pt-4 z-10">
-            <div className="mx-auto flex w-full max-w-2xl items-end gap-2 rounded-[28px] border border-(--paper-300) bg-(--paper-100) p-1.5 transition-all dark:bg-transparent">
+        <div className="pb-[env(safe-area-inset-bottom)] relative">
+            <div className="mx-auto flex w-full max-w-2xl items-end gap-2 rounded-[28px] border border-(--paper-300) bg-(--paper-100)/85 backdrop-blur-xl p-1.5 shadow-[0_8px_30px_rgb(0,0,0,0.06)] transition-all dark:bg-black/50">
 
                 {/* 💡 修复：恢复输入框的宽敞内边距和 16px 字体 */}
                 <textarea
