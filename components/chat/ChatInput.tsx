@@ -76,16 +76,17 @@ export function ChatInput({
                     <button
                         onClick={handleSubmit}
                         disabled={!value.trim()}
-                        className="
-                                    mb-1 flex h-10 w-10 shrink-0 items-center justify-center 
-                                    text-(--caramel-500) transition-all duration-300
-                                    hover:scale-110 active:scale-95
-                                    disabled:opacity-30 disabled:hover:scale-100
-                                "
+                        className={`
+                            mb-1 flex h-10 w-10 shrink-0 items-center justify-center 
+                            transition-all duration-300 rounded-full
+                            ${!value.trim() 
+                                ? "text-(--caramel-500)/40 hover:text-(--caramel-500)/60" 
+                                : "text-(--paper-100) bg-(--caramel-500) hover:bg-(--caramel-600) shadow-sm hover:scale-105 active:scale-95"}
+                        `}
                     >
-                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="transform rotate-[-8deg] ml-0.5 mt-0.5">
-                            <path d="M10 14l11 -11" />
-                            <path d="M21 3l-6.5 18a0.55 .55 0 0 1 -1 0l-3.5 -7l-7 -3.5a0.55 .55 0 0 1 0 -1l18 -6.5" />
+                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className={`${value.trim() ? "translate-x-[-1px] translate-y-[1px]" : ""}`}>
+                            <line x1="22" y1="2" x2="11" y2="13"></line>
+                            <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
                         </svg>
                     </button>
                 )}

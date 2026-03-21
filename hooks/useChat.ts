@@ -23,11 +23,16 @@ export function useChat({ conversationId, initialMessages = [] }: UseChatProps =
     const [error, setError] = useState<string | null>(null);
     const [lastInput, setLastInput] = useState("");
     const { consume, startAbort, cancel } = useStreaming();
+    const [prevId, setPrevId] = useState(conversationId);
 
-    useEffect(() => {
+    // 💡 修复：利用 React 的组件渲染拦截 (Render phase state update)
+    // 直接在渲染期比对 ID，如果 ID 变了，马上同步最新初始消息。
+    // 这比 useEffect (挂载后才执行) 快一个渲染周期，完美解决切换对话时的消息覆盖 Bug！
+    if (conversationId !== prevId) {
+        setPrevId(conversationId);
         setMessages(initialMessages);
         setError(null);
-    }, [conversationId]);
+    }
 
     const stop = useCallback(() => {
         cancel();
@@ -70,6 +75,8 @@ export function useChat({ conversationId, initialMessages = [] }: UseChatProps =
                 content: "",
                 createdAt: new Date(),
                 isStreaming: true,
+                isThinking: true,
+                thinkingMessage: "Kiki 正在思考...",
             };
 
             if (isRegenerate) {

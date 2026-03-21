@@ -65,10 +65,6 @@ export function MessageContent({ content, isStreaming, isUser }: MessageContentP
             >
                 {content}
             </ReactMarkdown>
-            {isStreaming && (
-                <span className={`ml-1 inline-block w-1.5 h-3.5 animate-pulse align-middle ${isUser ? 'bg-white' : 'bg-(--caramel-500)'
-                    }`} />
-            )}
         </div>
     );
 }

@@ -99,10 +99,11 @@ export function MessageList({
     return (
         <div className="h-full overflow-y-auto px-4 pb-28 pt-4">
             <div className="mx-auto max-w-2xl space-y-4">
-                {messages.map((message) => (
+                {messages.map((message, index) => (
                     <MessageBubble
                         key={message.id}
                         message={message}
+                        isLast={index === messages.length - 1}
                         onCopy={() => onCopy?.(message)}
                         onRegenerate={() => onRegenerate?.(message)}
                         onDelete={() => onDelete?.(message)}

@@ -40,7 +40,7 @@ export default function Page() {
         initialMessages: currentConversation?.messages ?? [],
     });
 
-    const [isSidebarOpen, setIsSidebarOpen] = useState(true);
+    const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
     // 🚀 next-themes 状态管理
     const { resolvedTheme, setTheme } = useTheme();
@@ -49,6 +49,9 @@ export default function Page() {
     // 💡 修复 SSR 水合：仅在挂载后标记为 true [cite: 13, 15]
     useEffect(() => {
         setMounted(true);
+        if (window.innerWidth >= 768) {
+            setIsSidebarOpen(true);
+        }
     }, []);
 
     const isDark = mounted ? resolvedTheme === "dark" : false;
@@ -103,7 +106,7 @@ export default function Page() {
     };
 
     return (
-        <div className="flex h-dvh overflow-hidden bg-(--paper-100) transition-colors duration-300">
+        <div className="absolute inset-0 flex overflow-hidden bg-(--paper-100) transition-colors duration-300">
             <div
                 className={`fixed inset-y-0 left-0 z-40 w-72 bg-(--paper-100) transform transition-transform duration-300 ease-in-out md:translate-x-0 md:static md:block ${isSidebarOpen ? "translate-x-0" : "-translate-x-full"
                     }`}

@@ -101,20 +101,27 @@ export function useConversations() {
     }, []);
 
     const deleteConversation = useCallback((id: string) => {
-        setConversations((prev) => {
-            const filtered = prev.filter((conv) => conv.id !== id);
-            if (filtered.length === 0) {
-                const newId = generateId();
-                const newConv = { id: newId, title: "新对话", messages: [], createdAt: new Date(), updatedAt: new Date(), isPinned: false };
-                setCurrentConversationId(newId);
-                return [newConv];
-            }
+        const filtered = conversations.filter((conv) => conv.id !== id);
+        
+        if (filtered.length === 0) {
+            const newId = generateId();
+            const newConv: Conversation = { 
+                id: newId, 
+                title: "新对话", 
+                messages: [], 
+                createdAt: new Date(), 
+                updatedAt: new Date(), 
+                isPinned: false 
+            };
+            setConversations([newConv]);
+            setCurrentConversationId(newId);
+        } else {
+            setConversations(filtered);
             if (currentConversationId === id) {
                 setCurrentConversationId(filtered[0].id);
             }
-            return filtered;
-        });
-    }, [currentConversationId]);
+        }
+    }, [conversations, currentConversationId]);
 
     const updateConversationMessages = useCallback(
         (id: string, messages: Message[]) => {

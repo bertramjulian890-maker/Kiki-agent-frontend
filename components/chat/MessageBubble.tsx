@@ -1,10 +1,12 @@
 "use client";
 import { MessageContent } from "./MessageContent";
 import { useState, useRef, useEffect } from "react";
+import { motion } from "framer-motion";
 import type { Message } from "@/types/chat";
 
 interface MessageBubbleProps {
     message: Message;
+    isLast?: boolean;
     onCopy?: (message: Message) => void;
     onRegenerate?: (message: Message) => void;
     onDelete?: (message: Message) => void;
@@ -13,6 +15,7 @@ interface MessageBubbleProps {
 
 export function MessageBubble({
     message,
+    isLast = false,
     onCopy,
     onRegenerate,
     onDelete,
@@ -79,11 +82,11 @@ export function MessageBubble({
                 {/* 🚀 视觉优化 1：如果只有思考状态没有正文，彻底隐藏这个带背景色的方块，防止出现空心气泡 */}
                 {!isThinkingOnly && (
                     <div
-                        className={`relative px-3 py-2 text-[15px] shadow-sm transition-colors ${isUser
-                            ? 'bg-(--caramel-500)/90 text-(--paper-100) rounded-2xl rounded-tr-sm'
+                        className={`relative text-[15px] transition-colors ${isUser
+                            ? 'px-3 py-2 shadow-sm bg-(--caramel-500)/90 text-(--paper-100) rounded-2xl rounded-tr-sm'
                             : isError
-                                ? 'bg-red-50 text-red-700 border border-red-200 rounded-2xl rounded-tl-sm dark:bg-red-900/20'
-                                : 'bg-(--paper-100) text-(--charcoal-700) rounded-2xl rounded-tl-sm'
+                                ? 'px-3 py-2 shadow-sm bg-red-50 text-red-700 border border-red-200 rounded-2xl rounded-tl-sm dark:bg-red-900/20'
+                                : 'py-1 text-(--charcoal-700)'
                             }`}
                     >
                         {isEditing ? (
@@ -136,6 +139,20 @@ export function MessageBubble({
                     </div>
                 )}
 
+                {/* 🚀 视觉优化 3：外部 Streaming 动画 Logo (取代内部的打字机光标) */}
+                {!isUser && message.isStreaming && !message.isThinking && (
+                    <motion.div 
+                        className="flex items-center justify-start pl-3 py-1 text-(--caramel-500)"
+                        animate={{ scale: [0.8, 1.15, 0.8], opacity: [0.5, 1, 0.5] }}
+                        transition={{ duration: 1.2, repeat: Infinity, ease: "easeInOut" }}
+                        title="Kiki 正在输入..."
+                    >
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="currentColor" stroke="none">
+                            <path d="M12 2C12 2 12 10 20 12C12 14 12 22 12 22C12 22 12 14 4 12C12 10 12 2 12 2Z" />
+                        </svg>
+                    </motion.div>
+                )}
+
                 {/* 原本的菜单栏逻辑：只有在【不打字】且【不思考】时才允许 hover 显示 */}
                 {!isUser && !message.isStreaming && !message.isThinking && (
                     <div className="opacity-0 group-hover:opacity-100 flex items-center gap-1.5 pl-2 transition-opacity duration-300" ref={menuRef}>
@@ -151,7 +168,7 @@ export function MessageBubble({
                             )}
                         </button>
 
-                        {onRegenerate && (
+                        {onRegenerate && isLast && (
                             <button
                                 onClick={() => onRegenerate(message)}
                                 className="p-1.5 rounded-md hover:bg-(--paper-300) text-(--charcoal-700)/40 hover:text-(--charcoal-700) transition-colors"
