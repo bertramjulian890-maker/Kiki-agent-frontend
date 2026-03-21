@@ -77,7 +77,7 @@ export function MessageBubble({
 
     return (
         <div className={`flex w-full items-start gap-4 mb-2 ${isUser ? 'justify-end' : 'justify-start'}`}>
-            <div className={`group relative w-full flex flex-col gap-1.5 ${isUser ? 'items-end' : 'items-start'}`}>
+            <div className={`group relative max-w-[85%] min-w-[80px] flex flex-col gap-1.5 ${isUser ? 'items-end' : 'items-start'}`}>
 
                 {/* 🚀 视觉优化 1：如果只有思考状态没有正文，彻底隐藏这个带背景色的方块，防止出现空心气泡 */}
                 {!isThinkingOnly && (
