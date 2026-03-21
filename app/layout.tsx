@@ -7,6 +7,7 @@ const myRetroSerif = localFont({
     src: "../public/fonts/MyRetroSerif-Regular.subset.woff2",
     variable: "--font-retro-serif",
     display: "swap",
+    adjustFontFallback: false,
 });
 
 export const metadata: Metadata = {
