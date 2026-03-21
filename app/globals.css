@@ -30,7 +30,6 @@
     --color-fav-5: var(--fav-5);
     --color-fav-6: var(--fav-6);
     --color-fav-7: var(--fav-7);
-    --color-welcome-text: var(--welcome-text);
 }
 
 @keyframes breath {
@@ -68,7 +67,6 @@
     --fav-5: #DD9900;
     --fav-6: #88929F;
     --fav-7: #B8C5C9;
-    --welcome-text: var(--caramel-500);
 }
 
 .dark {
@@ -80,7 +78,6 @@
 
     --charcoal-700: #E8E4DB;
     --caramel-500: #E03131;
-    --welcome-text: var(--fav-1);
 }
 
 * {

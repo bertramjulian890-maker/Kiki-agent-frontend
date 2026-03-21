@@ -47,11 +47,8 @@ export function ChatInput({
 
     return (
         <div className="pb-6 relative w-full flex justify-center">
-            {/* 💡 真·半透明毛玻璃 + 主题色背光 (Backlight) */}
-            <div className="w-full max-w-3xl flex items-end gap-3 rounded-[32px] bg-[rgba(255,255,255,0.9)] dark:bg-[rgba(20,20,20,0.8)] backdrop-blur-xl border border-white/80 dark:border-white/10 p-2 pl-4 transition-all duration-500 group relative
-                shadow-[0_20px_70px_-10px_rgba(0,0,0,0.05),0_10px_30px_-15px_var(--welcome-text)]
-                hover:shadow-[0_25px_80px_-5px_rgba(0,0,0,0.08),0_15px_40px_-5px_var(--welcome-text)]
-                after:absolute after:inset-0 after:rounded-[32px] after:shadow-[inset_0_0_20px_rgba(255,255,255,1)] dark:after:shadow-[inset_0_0_20px_rgba(255,255,255,0.05)] after:pointer-events-none">
+            {/* 💡 真·毛玻璃效果: 半透明叠加 + 强模糊 (backdrop-blur-2xl) */}
+            <div className="w-full max-w-3xl flex items-end gap-3 rounded-[32px] bg-[rgba(var(--fav-1-rgb),0.2)] dark:bg-[rgba(var(--fav-2-rgb),0.2)] backdrop-blur-2xl border border-white/40 dark:border-white/10 shadow-[0_12px_44px_rgba(37,156,182,0.15)] p-2 pl-4 transition-all overflow-hidden relative">
                 <textarea
                     ref={textareaRef}
                     value={value}
