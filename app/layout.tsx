@@ -4,7 +4,7 @@ import "./globals.css";
 import { ThemeProvider } from "@/components/ThemeProvider";
 
 const myRetroSerif = localFont({
-    src: "../public/fonts/MyRetroSerif-Regular.otf",
+    src: "../public/fonts/MyRetroSerif-Regular.subset.woff2",
     variable: "--font-retro-serif",
     display: "swap",
 });

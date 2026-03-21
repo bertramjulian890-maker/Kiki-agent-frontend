@@ -174,7 +174,7 @@ export default function Page() {
                 </header>
 
                 <main className="flex-1 overflow-hidden transition-colors duration-300">
-                    {currentConversation ? (
+                    {isLoading ? null : currentConversation ? (
                         <ChatContainer
                             messages={messages}
                             isLoading={isLoading}

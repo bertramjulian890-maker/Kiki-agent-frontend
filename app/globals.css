@@ -85,6 +85,8 @@ body {
     background-image:
         radial-gradient(circle at 15% 20%, rgba(179, 36, 40, 0), transparent 45%),
         radial-gradient(circle at 85% 95%, rgba(38, 163, 172, 0), transparent 60%);
+    background-attachment: fixed;
+    overscroll-behavior-y: none;
 }
 
 /* 滚动条美化 */
