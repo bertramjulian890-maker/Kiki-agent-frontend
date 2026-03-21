@@ -13,7 +13,7 @@ export function ChatInput({
     isLoading,
     onSend,
     onStop,
-    placeholder = "给 Kiki 发送消息...",
+    placeholder = "问点什么...",
 }: ChatInputProps) {
     const [value, setValue] = useState("");
     const textareaRef = useRef<HTMLTextAreaElement>(null);
@@ -46,9 +46,12 @@ export function ChatInput({
     };
 
     return (
-        <div className="pb-6 relative w-full flex justify-center drop-shadow-[0_12px_44px_rgba(0,0,0,0.06)]">
-            <div className="w-full flex items-end gap-3 rounded-[32px] bg-(--paper-50)/80 border border-[rgba(248,245,238,0.3)] backdrop-blur-2xl p-2 pl-4 transition-all">
-
+        <div className="pb-6 relative w-full flex justify-center">
+            {/* 💡 真·半透明毛玻璃 + 主题色背光 (Backlight) */}
+            <div className="w-full max-w-3xl flex items-end gap-3 rounded-[32px] bg-[rgba(255,255,255,0.9)] dark:bg-[rgba(20,20,20,0.8)] backdrop-blur-xl border border-white/80 dark:border-white/10 p-2 pl-4 transition-all duration-500 group relative
+                shadow-[0_20px_70px_-10px_rgba(0,0,0,0.05),0_10px_30px_-15px_var(--welcome-text)]
+                hover:shadow-[0_25px_80px_-5px_rgba(0,0,0,0.08),0_15px_40px_-5px_var(--welcome-text)]
+                after:absolute after:inset-0 after:rounded-[32px] after:shadow-[inset_0_0_20px_rgba(255,255,255,1)] dark:after:shadow-[inset_0_0_20px_rgba(255,255,255,0.05)] after:pointer-events-none">
                 <textarea
                     ref={textareaRef}
                     value={value}
@@ -56,37 +59,39 @@ export function ChatInput({
                     onKeyDown={handleKeyDown}
                     placeholder={placeholder}
                     rows={1}
-                    className="max-h-40 min-h-[52px] flex-1 resize-none overflow-hidden bg-transparent py-4 text-[16px] font-serif leading-relaxed text-(--charcoal-700) outline-none placeholder:text-(--charcoal-700)/30 transition-all"
+                    className="max-h-40 min-h-[52px] flex-1 resize-none overflow-hidden bg-transparent py-4 text-[16px] font-serif leading-relaxed text-(--charcoal-700) outline-none placeholder:text-(--charcoal-700)/40 transition-all z-10"
                     disabled={isLoading}
                 />
 
-                {isLoading && onStop ? (
-                    <button
-                        onClick={onStop}
-                        className="mb-1.5 mr-1 flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-red-400 hover:bg-red-500 text-white transition-all shadow-sm"
-                        title="停止生成"
-                    >
-                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><rect x="6" y="6" width="12" height="12" rx="2" /></svg>
-                    </button>
-                ) : (
-                    <button
-                        onClick={handleSubmit}
-                        disabled={!value.trim()}
-                        className={`
-                            mb-1.5 mr-1 flex h-11 w-11 shrink-0 items-center justify-center 
-                            transition-all duration-300 rounded-full select-none
-                            ${!value.trim() 
-                                ? "bg-[rgba(226,220,203,0.4)] text-(--charcoal-700)/30" 
-                                : "bg-(--caramel-500) text-white shadow-[0_4px_14px_rgba(201,42,42,0.3)] hover:scale-105 active:scale-95"}
-                        `}
-                    >
-                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className={`${value.trim() ? "translate-x-[-1px] translate-y-[1px]" : ""}`}>
-                            <line x1="22" y1="2" x2="11" y2="13"></line>
-                            <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
-                        </svg>
-                    </button>
-                )}
+                <div className="z-10 relative">
+                    {isLoading && onStop ? (
+                        <button
+                            onClick={onStop}
+                            className="mb-1.5 mr-1 flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-red-400 hover:bg-red-500 text-white transition-all shadow-sm"
+                            title="停止生成"
+                        >
+                            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><rect x="6" y="6" width="12" height="12" rx="2" /></svg>
+                        </button>
+                    ) : (
+                        <button
+                            onClick={handleSubmit}
+                            disabled={!value.trim()}
+                            className={`
+                                mb-1.5 mr-1 flex h-11 w-11 shrink-0 items-center justify-center 
+                                transition-all duration-300 rounded-full select-none
+                                ${!value.trim()
+                                    ? "bg-black/5 dark:bg-white/5 text-(--charcoal-700)/30"
+                                    : "bg-(--caramel-500) text-white shadow-[0_4px_14px_rgba(201,42,42,0.3)] hover:scale-105 active:scale-95"}
+                            `}
+                        >
+                            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className={`${value.trim() ? "translate-x-[-1px] translate-y-[1px]" : ""}`}>
+                                <line x1="22" y1="2" x2="11" y2="13"></line>
+                                <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
+                            </svg>
+                        </button>
+                    )}
+                </div>
             </div>
-        </div>
+        </div >
     );
 }
