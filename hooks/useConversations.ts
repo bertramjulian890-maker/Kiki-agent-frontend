@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useState, useRef } from "react";
 import type { Conversation, Message } from "@/types/chat";
 import {
     saveConversations,
@@ -58,8 +58,19 @@ export function useConversations() {
         initStorage();
     }, []);
 
+    // 🚀 新增 ref 拦截首次渲染
+    const isFirstLoad = useRef(true);
+
     useEffect(() => {
-        if (!isLoading && conversations.length > 0) {
+        if (isLoading) return;
+
+        // 如果是第一次加载完成，跳过保存，只把标记设为 false
+        if (isFirstLoad.current) {
+            isFirstLoad.current = false;
+            return;
+        }
+
+        if (conversations.length > 0) {
             debouncedSaveConversations(conversations);
         }
     }, [conversations, isLoading]);

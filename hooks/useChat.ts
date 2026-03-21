@@ -150,29 +150,32 @@ export function useChat({ conversationId, initialMessages = [] }: UseChatProps =
     }, [messages, send]);
 
     const editMessage = useCallback(async (messageToEdit: Message, newContent: string) => {
-        // 1. 找到要编辑的消息
-        const index = messages.findIndex((m) => m.id === messageToEdit.id);
-        if (index === -1) return;
+        // 🚀 彻底移除对外部 messages 闭包的依赖，使用 prev 确保拿到最新状态
+        let shouldSend = false;
 
-        // 2. 更新消息内容
-        setMessages((prev) =>
-            prev.map((m, idx) =>
-                idx === index ? { ...m, content: newContent } : m
-            )
-        );
+        setMessages((prev) => {
+            const index = prev.findIndex((m) => m.id === messageToEdit.id);
+            if (index === -1) return prev;
 
-        // 3. 如果是用户消息，重新生成 AI 回复
-        if (messageToEdit.role === "user") {
-            // 删除该用户消息之后的所有消息
-            const nextMessages = messages.slice(index + 1);
-            if (nextMessages.length > 0) {
-                setMessages((prev) => prev.slice(0, index + 1));
+            if (messageToEdit.role !== "user") {
+                const newArr = [...prev];
+                newArr[index] = { ...newArr[index], content: newContent };
+                return newArr;
             }
 
-            // 发送新内容重新生成
+            // 如果是 user 消息，不仅修改，还要截断后面的消息
+            shouldSend = true;
+            return prev.slice(0, index).concat({
+                ...prev[index],
+                content: newContent
+            });
+        });
+
+        // 这里的 send 内部也使用了 setMessages，会被 React 18 正确批处理
+        if (shouldSend) {
             await send(newContent, true);
         }
-    }, [messages, send]);
+    }, [send]); // 🚀 依赖数组中去掉了 messages，极大减轻重绘负担
 
     return useMemo(
         () => ({
