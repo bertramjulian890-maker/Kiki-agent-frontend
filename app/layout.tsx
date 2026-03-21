@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import localFont from "next/font/local";
 import "./globals.css";
+import { ThemeProvider } from "@/components/ThemeProvider";
 
 const myRetroSerif = localFont({
     src: "../public/fonts/MyRetroSerif-Regular.otf",
@@ -19,8 +20,13 @@ export default function RootLayout({
     children: React.ReactNode;
 }>) {
     return (
-        <html lang="zh-CN" className={`${myRetroSerif.variable} antialiased`}>
-            <body>{children}</body>
+        // 🚀 必须在 html 标签加上 suppressHydrationWarning
+        <html lang="zh-CN" className={`${myRetroSerif.variable} antialiased`} suppressHydrationWarning>
+            <body>
+                <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
+                    {children}
+                </ThemeProvider>
+            </body>
         </html>
     );
 }

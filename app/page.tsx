@@ -8,6 +8,7 @@ import ChatContainer from "@/components/chat/ChatContainer";
 import { SidebarToggleButton } from "@/components/ui/SidebarToggleButton";
 import { Button } from "@/components/ui/Button";
 import { Message } from "@/types/chat";
+import { useTheme } from "next-themes";
 
 export default function Page() {
     const {
@@ -19,8 +20,6 @@ export default function Page() {
         renameConversation,
         togglePinConversation,
         duplicateConversation,
-        deleteMessage,
-        regenerateMessage,
         exportConversations,
         updateConversationMessages,
     } = useConversations();
@@ -43,36 +42,18 @@ export default function Page() {
 
     const [isSidebarOpen, setIsSidebarOpen] = useState(true);
 
-    // 💡 修复水合错误：初始状态全部默认为 false (或 light theme)
-    const [isDark, setIsDark] = useState(false);
-    // 💡 新增挂载状态，用于判断是否已经到了客户端
+    // 🚀 next-themes 状态管理
+    const { resolvedTheme, setTheme } = useTheme();
     const [mounted, setMounted] = useState(false);
 
-    // 💡 修复水合错误：在客户端挂载后，再从 localStorage 读取主题设置
     useEffect(() => {
         setMounted(true);
-        const savedTheme = localStorage.getItem("theme") === "dark";
-        setIsDark(savedTheme);
     }, []);
 
-    // 💡 监听 isDark 变化并同步到 html 标签
-    useEffect(() => {
-        if (mounted) {
-            document.documentElement.classList.toggle("dark", isDark);
-        }
-    }, [isDark, mounted]);
-
-    useEffect(() => {
-        if (!currentConversation) return;
-        updateConversationMessages(currentConversation.id, messages);
-    }, [messages, currentConversation?.id, updateConversationMessages]);
+    const isDark = mounted ? resolvedTheme === "dark" : false;
 
     const toggleTheme = () => {
-        setIsDark((prev) => {
-            const next = !prev;
-            localStorage.setItem("theme", next ? "dark" : "light");
-            return next;
-        });
+        setTheme(isDark ? "light" : "dark");
     };
 
     const toggleSidebar = () => {
@@ -85,13 +66,20 @@ export default function Page() {
         }
     };
 
+    // 💡 智能同步：只在空闲或打字结束时同步，彻底拒绝高频重绘！
+    useEffect(() => {
+        if (!currentConversation) return;
+
+        // 🚀 核心拦截：如果 AI 正在疯狂打字，直接静默，不触发全局侧边栏的同步
+        if (isLoading) return;
+
+        // 当打字结束，isLoading 变成 false 时，再把最终完整的话同步给侧边栏
+        updateConversationMessages(currentConversation.id, messages);
+    }, [messages, isLoading, currentConversation?.id, updateConversationMessages]);
+
     const handleCreateConversation = () => {
         createConversation();
         closeSidebar();
-    };
-
-    const handleExportConversations = () => {
-        exportConversations();
     };
 
     const handleCopyMessage = (message: Message) => {
@@ -101,47 +89,19 @@ export default function Page() {
     };
 
     const handleRegenerateMessage = (message: Message) => {
-        if (regenerateActiveMessage) {
-            regenerateActiveMessage(message);
-        }
-
-        if (!currentConversation) return;
-        const messageIndex = currentConversation.messages.findIndex((m) => m.id === message.id);
-        if (messageIndex !== -1) {
-            regenerateMessage(currentConversation.id, messageIndex);
-        }
+        if (regenerateActiveMessage) regenerateActiveMessage(message);
     };
 
     const handleDeleteMessage = (message: Message) => {
-        if (deleteActiveMessage) {
-            deleteActiveMessage(message);
-        }
-
-        if (!currentConversation) return;
-        const messageIndex = currentConversation.messages.findIndex((m) => m.id === message.id);
-        if (messageIndex !== -1) {
-            deleteMessage(currentConversation.id, messageIndex);
-        }
+        if (deleteActiveMessage) deleteActiveMessage(message);
     };
 
     const handleEditMessage = (message: Message, newContent: string) => {
-        // 💡 2. 调用从 useChat 里拿出来的正牌编辑方法
-        if (editActiveMessage) {
-            editActiveMessage(message, newContent);
-        }
-
-        // 同步更新侧边栏的历史记录
-        if (!currentConversation) return;
-        const messageIndex = currentConversation.messages.findIndex((m) => m.id === message.id);
-        if (messageIndex !== -1) {
-            // 如果你的 useConversations 钩子里也有负责编辑保存的方法（比如 editConversationMessage），在这里调用
-            // 否则依靠上面的 useEffect 自动同步也可以
-        }
+        if (editActiveMessage) editActiveMessage(message, newContent);
     };
 
-    // 💡 防止内容闪烁：在未挂载前返回一个简单的结构，或者直接 return null
     if (!mounted) {
-        return <div className="flex h-dvh bg-(--paper-100)" />;
+        return null; // 彻底避免白屏，交给 next-themes 和 CSS 处理初始状态
     }
 
     return (
@@ -159,7 +119,7 @@ export default function Page() {
                     onTogglePinConversation={togglePinConversation}
                     onDuplicateConversation={duplicateConversation}
                     onCreateConversation={handleCreateConversation}
-                    onExportConversations={handleExportConversations}
+                    onExportConversations={exportConversations}
                 />
             </div>
 

@@ -1,41 +1,83 @@
+import { get, set, del } from 'idb-keyval';
+
 /**
- * 本地存储工具
- * 用于持久化对话列表和当前对话ID
+ * 本地存储工具 (IndexedDB 版本)
+ * 突破 localStorage 5MB 限制，支持大容量异步存储
  */
 
 const STORAGE_KEYS = {
-    CONVERSATIONS: 'kiki_conversations',
-    CURRENT_CONVERSATION_ID: 'kiki_current_conversation_id',
-    THEME: 'theme',
+    CONVERSATIONS: 'kiki_conversations_v2', // 升级版本号，防止数据混乱
+    CURRENT_CONVERSATION_ID: 'kiki_current_conversation_id_v2',
+    THEME: 'theme', // 主题较小，可以继续保留在 localStorage
 } as const;
 
+// 旧的 key，用于迁移
+const OLD_KEYS = {
+    CONVERSATIONS: 'kiki_conversations',
+    CURRENT_CONVERSATION_ID: 'kiki_current_conversation_id',
+};
+
 // ============================================
-// 对话列表存储
+// 数据迁移逻辑 (LocalStorage -> IndexedDB)
 // ============================================
 
-export function saveConversations<T>(conversations: T[]): void {
+async function migrateIfNeeded() {
     if (typeof window === 'undefined') return;
-    try {
-        localStorage.setItem(STORAGE_KEYS.CONVERSATIONS, JSON.stringify(conversations));
-    } catch (error) {
-        console.error('Failed to save conversations:', error);
+
+    const newDbData = await get(STORAGE_KEYS.CONVERSATIONS);
+    if (!newDbData) {
+        const oldData = localStorage.getItem(OLD_KEYS.CONVERSATIONS);
+        if (oldData) {
+            try {
+                console.log('🚚 正在将聊天记录从 LocalStorage 迁移到 IndexedDB...');
+                const parsed = JSON.parse(oldData);
+                await set(STORAGE_KEYS.CONVERSATIONS, parsed);
+
+                const oldId = localStorage.getItem(OLD_KEYS.CURRENT_CONVERSATION_ID);
+                if (oldId) await set(STORAGE_KEYS.CURRENT_CONVERSATION_ID, oldId);
+
+                // 迁移成功后清理旧数据（可选，建议稳定后再手动清理，这里先保留以防万一）
+                // localStorage.removeItem(OLD_KEYS.CONVERSATIONS);
+                console.log('✅ 迁移完成！');
+            } catch (e) {
+                console.error('迁移数据失败:', e);
+            }
+        }
     }
 }
 
-export function loadConversations<T>(): T[] {
+// ============================================
+// 对话列表存储 (异步)
+// ============================================
+
+export async function saveConversations<T>(conversations: T[]): Promise<void> {
+    if (typeof window === 'undefined') return;
+    try {
+        await set(STORAGE_KEYS.CONVERSATIONS, conversations);
+    } catch (error) {
+        console.error('Failed to save conversations to IndexedDB:', error);
+    }
+}
+
+export async function loadConversations<T>(): Promise<T[]> {
     if (typeof window === 'undefined') return [];
     try {
-        const data = localStorage.getItem(STORAGE_KEYS.CONVERSATIONS);
+        await migrateIfNeeded(); // 加载前检查是否需要迁移
+        const data = await get<T[]>(STORAGE_KEYS.CONVERSATIONS);
         if (!data) return [];
-        const parsed = JSON.parse(data);
+
         // 转换日期字符串回 Date 对象
-        return parsed.map((conv: T & { createdAt: string; updatedAt: string }) => ({
+        return data.map((conv: any) => ({
             ...conv,
             createdAt: new Date(conv.createdAt),
             updatedAt: new Date(conv.updatedAt),
+            messages: conv.messages.map((m: any) => ({
+                ...m,
+                createdAt: new Date(m.createdAt)
+            }))
         }));
     } catch (error) {
-        console.error('Failed to load conversations:', error);
+        console.error('Failed to load conversations from IndexedDB:', error);
         return [];
     }
 }
@@ -44,68 +86,26 @@ export function loadConversations<T>(): T[] {
 // 当前对话ID存储
 // ============================================
 
-export function saveCurrentConversationId(id: string | null): void {
+export async function saveCurrentConversationId(id: string | null): Promise<void> {
     if (typeof window === 'undefined') return;
-    try {
-        if (id) {
-            localStorage.setItem(STORAGE_KEYS.CURRENT_CONVERSATION_ID, id);
-        } else {
-            localStorage.removeItem(STORAGE_KEYS.CURRENT_CONVERSATION_ID);
-        }
-    } catch (error) {
-        console.error('Failed to save current conversation ID:', error);
+    if (id) {
+        await set(STORAGE_KEYS.CURRENT_CONVERSATION_ID, id);
+    } else {
+        await del(STORAGE_KEYS.CURRENT_CONVERSATION_ID);
     }
 }
 
-export function loadCurrentConversationId(): string | null {
+export async function loadCurrentConversationId(): Promise<string | null> {
     if (typeof window === 'undefined') return null;
-    try {
-        return localStorage.getItem(STORAGE_KEYS.CURRENT_CONVERSATION_ID);
-    } catch (error) {
-        console.error('Failed to load current conversation ID:', error);
-        return null;
-    }
+    return (await get<string>(STORAGE_KEYS.CURRENT_CONVERSATION_ID)) || null;
 }
 
 // ============================================
-// 数据导出导入（新增）
+// 数据清理
 // ============================================
 
-export function exportConversations(): string {
-    if (typeof window === 'undefined') return '{}';
-    try {
-        return localStorage.getItem(STORAGE_KEYS.CONVERSATIONS) || '{}';
-    } catch (error) {
-        console.error('Failed to export conversations:', error);
-        return '{}';
-    }
-}
-
-export function importConversations(data: string): boolean {
-    if (typeof window === 'undefined') return false;
-    try {
-        const parsed = JSON.parse(data);
-        if (Array.isArray(parsed)) {
-            localStorage.setItem(STORAGE_KEYS.CONVERSATIONS, data);
-            return true;
-        }
-        return false;
-    } catch (error) {
-        console.error('Failed to import conversations:', error);
-        return false;
-    }
-}
-
-// ============================================
-// 清理函数
-// ============================================
-
-export function clearAllStorage(): void {
+export async function clearAllStorage(): Promise<void> {
     if (typeof window === 'undefined') return;
-    try {
-        localStorage.removeItem(STORAGE_KEYS.CONVERSATIONS);
-        localStorage.removeItem(STORAGE_KEYS.CURRENT_CONVERSATION_ID);
-    } catch (error) {
-        console.error('Failed to clear storage:', error);
-    }
+    await del(STORAGE_KEYS.CONVERSATIONS);
+    await del(STORAGE_KEYS.CURRENT_CONVERSATION_ID);
 }
