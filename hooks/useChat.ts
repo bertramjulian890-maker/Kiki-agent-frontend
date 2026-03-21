@@ -80,18 +80,54 @@ export function useChat({ conversationId, initialMessages = [] }: UseChatProps =
 
             try {
                 await consume(streamMessage({ message: text, conversationId }, signal), {
-                    onChunk: (piece) => {
+                    // 🚀 名字从 onChunk 变成了 onData
+                    onData: (event) => {
                         setMessages((prev) =>
-                            prev.map((m) =>
-                                m.id === assistantId ? { ...m, content: m.content + piece } : m
-                            )
+                            prev.map((m) => {
+                                if (m.id !== assistantId) return m;
+
+                                // 直接使用 event 对象进行状态分发
+                                switch (event.type) {
+                                    case 'event':
+                                        if (event.status === 'thinking') {
+                                            return { ...m, isThinking: true, thinkingMessage: event.message };
+                                        }
+                                        break;
+
+                                    case 'tool':
+                                        const currentTools = m.tools ? [...m.tools] : [];
+                                        const existingToolIndex = currentTools.findIndex(
+                                            t => t.tool_name === event.tool_name && t.tool_input === event.tool_input
+                                        );
+
+                                        if (existingToolIndex >= 0) {
+                                            currentTools[existingToolIndex].status = event.status;
+                                        } else {
+                                            currentTools.push({
+                                                tool_name: event.tool_name,
+                                                tool_input: event.tool_input,
+                                                status: event.status
+                                            });
+                                        }
+                                        return { ...m, tools: currentTools, isThinking: true };
+
+                                    case 'chunk':
+                                        return {
+                                            ...m,
+                                            content: m.content + (event.content || ""),
+                                            isThinking: false
+                                        };
+                                }
+                                return m;
+                            })
                         );
                     },
                     onEnd: (finalText) => {
+                        // 结束时确保思考状态关闭
                         setMessages((prev) =>
                             prev.map((m) =>
                                 m.id === assistantId
-                                    ? { ...m, content: finalText || m.content, isStreaming: false }
+                                    ? { ...m, content: finalText || m.content, isStreaming: false, isThinking: false }
                                     : m
                             )
                         );

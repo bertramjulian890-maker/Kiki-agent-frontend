@@ -1,11 +1,13 @@
 "use client";
 
 import { useRef, useCallback } from "react";
+// 注意：记得在 types/chat.ts 中把 StreamChunk 的类型拓展，允许它包含 tool 和 event 等字段
 import type { StreamChunk } from "@/types/chat";
 
 type StreamingCallbacks = {
     onStart?: () => void;
-    onChunk?: (text: string) => void;
+    // 🚀 核心修改 1：把 onChunk(text: string) 改为 onData(event: any)，把整个对象抛给上层
+    onData?: (event: any) => void;
     onEnd?: (finalText: string) => void;
     onError?: (message: string) => void;
 };
@@ -21,22 +23,26 @@ export function useStreaming() {
 
         try {
             for await (const event of stream) {
+                console.log("收到原始事件:", event);
                 // 如果发现外部主动触发了 abort，立刻跳出流循环
                 if (abortRef.current?.signal.aborted) {
                     break;
                 }
 
+                // 🚀 核心修改 2：无论是什么类型的事件（chunk/event/tool），统统交给 useChat 调度
+                callbacks.onData?.(event);
+
                 if (event.type === "start") {
                     callbacks.onStart?.();
                 }
 
+                // 记录文本拼接，为最终保存做准备
                 if (event.type === "chunk") {
                     const piece = event.content ?? "";
                     finalText += piece;
-                    callbacks.onChunk?.(piece);
                 }
 
-                if (event.type === "end") {
+                if (event.type === "end" || event.type === "done") {
                     callbacks.onEnd?.(event.fullResponse ?? finalText);
                 }
 
