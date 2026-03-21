@@ -71,14 +71,9 @@ export default function Page() {
         }
     };
 
-    // 💡 智能同步：增加防空判断，解决切换对话时的覆写风险 [cite: 25, 29]
     useEffect(() => {
         if (!currentConversation) return;
         if (isLoading) return;
-
-        // 如果 useChat 消息为空但数据库有数据，说明正在加载中，跳过同步 [cite: 28]
-        if (messages.length === 0 && currentConversation.messages.length > 0) return;
-
         updateConversationMessages(currentConversation.id, messages);
     }, [messages, isLoading, currentConversation?.id, updateConversationMessages]);
 
@@ -174,7 +169,7 @@ export default function Page() {
                 </header>
 
                 <main className="flex-1 overflow-hidden transition-colors duration-300">
-                    {isLoading ? null : currentConversation ? (
+                    {currentConversation ? (
                         <ChatContainer
                             messages={messages}
                             isLoading={isLoading}
@@ -190,14 +185,7 @@ export default function Page() {
                             onToggleTheme={toggleTheme}
                             onStop={stop}
                         />
-                    ) : (
-                        <div className="flex h-full items-center justify-center text-(--charcoal-700)/50">
-                            <div className="text-center">
-                                <p className="text-lg font-medium">请选择或创建一个对话</p>
-                                <p className="mt-2 text-sm">开始与 Kiki 的对话吧！</p>
-                            </div>
-                        </div>
-                    )}
+                    ) : null}
                 </main>
             </div>
         </div>

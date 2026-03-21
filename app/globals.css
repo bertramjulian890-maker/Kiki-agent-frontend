@@ -1,5 +1,13 @@
 @import "tailwindcss";
 
+@font-face {
+    font-family: "MyRetroSerif";
+    src: url("/fonts/MyRetroSerif-Regular.subset.woff2") format("woff2");
+    font-display: swap;
+    font-weight: normal;
+    font-style: normal;
+}
+
 @plugin "@tailwindcss/typography";
 
 @theme {
@@ -22,8 +30,9 @@
 
 /* 💡 1. 定义 Tailwind v4 的主题映射 */
 @theme {
-    /* 使用你刚才定义的本地字体变量 */
-    --font-serif: var(--font-retro-serif), serif;
+    /* 使用 CSS @font-face 加载的字体，不依赖 next/font/local */
+    --font-retro-serif: "MyRetroSerif", serif;
+    --font-serif: "MyRetroSerif", serif;
 
     /* 注册颜色 */
     --color-paper-100: var(--paper-100);
@@ -76,7 +85,7 @@ body {
     margin: 0;
     padding: 0;
     min-height: 100%;
-    font-family: var(--font-retro-serif), serif;
+    font-family: "MyRetroSerif", serif;
     background-color: var(--paper-100);
     color: var(--charcoal-700);
 }
