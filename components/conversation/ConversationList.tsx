@@ -49,14 +49,14 @@ export function ConversationList({
     };
 
     return (
-        <div className="h-full flex flex-col bg-[var(--paper-100)] border-r border-[var(--paper-300)] w-72">
+        <div className="h-full flex flex-col bg-var(--paper-100) border-r border-var(--paper-300) w-72">
             {/* 顶部操作区域 */}
-            <div className="p-4 border-b border-[var(--paper-300)]">
+            <div className="p-4 border-b border-var(--paper-300)">
                 <div className="flex gap-2 mb-3">
                     <NewConversationButton onClick={onCreateConversation} />
                     <button
                         onClick={onExportConversations}
-                        className="p-2 rounded-lg bg-[var(--paper-200)] hover:bg-[var(--paper-300)] transition-colors"
+                        className="p-2 rounded-lg bg-var(--paper-200) hover:bg-var(--paper-300) transition-colors"
                         title="导出对话数据"
                     >
                         <svg
@@ -69,7 +69,7 @@ export function ConversationList({
                             strokeWidth="2"
                             strokeLinecap="round"
                             strokeLinejoin="round"
-                            className="text-[var(--charcoal-700)]"
+                            className="text-var(--charcoal-700)"
                         >
                             <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
                             <polyline points="7 10 12 15 17 10"></polyline>
@@ -78,7 +78,7 @@ export function ConversationList({
                     </button>
                     <button
                         onClick={handleImportClick}
-                        className="p-2 rounded-lg bg-[var(--paper-200)] hover:bg-[var(--paper-300)] transition-colors"
+                        className="p-2 rounded-lg bg-var(--paper-200) hover:bg-var(--paper-300) transition-colors"
                         title="导入对话数据"
                     >
                         <svg
@@ -91,7 +91,7 @@ export function ConversationList({
                             strokeWidth="2"
                             strokeLinecap="round"
                             strokeLinejoin="round"
-                            className="text-[var(--charcoal-700)]"
+                            className="text-var(--charcoal-700)"
                         >
                             <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
                             <polyline points="17 8 12 3 7 8"></polyline>
@@ -127,7 +127,7 @@ export function ConversationList({
             />
 
             {/* 底部信息 */}
-            <div className="p-4 border-t border-[var(--paper-300)] text-xs text-[var(--charcoal-700)]/70">
+            <div className="p-4 border-t border-var(--paper-300) text-xs text-var(--charcoal-700)/70">
                 <p>共 {conversations.length} 个对话</p>
                 <p className="mt-1">数据仅存储在浏览器中</p>
             </div>

@@ -65,7 +65,7 @@ export function ConversationItem({
             onDoubleClick={handleStartEditing}
         >
             {/* 对话图标 */}
-            <div className="flex-shrink-0 w-8 h-8 rounded-full bg-(--paper-200) flex items-center justify-center">
+            <div className="flex-shrink:0 w-8 h-8 rounded-full bg-(--paper-200) flex items-center justify-center">
                 <svg
                     xmlns="http://www.w3.org/2000/svg"
                     width="16"

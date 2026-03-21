@@ -13,7 +13,7 @@ export function MessageContent({ content, isStreaming, isUser }: MessageContentP
     return (
         <div
             className={`
-                flex-1 w-full min-w-0 break-words
+                flex-1 w-full min-w-0 break-word
                 prose prose-sm max-w-none 
                 text-current
                 /* 💡 呼吸感优化：增加段落间距，但保留紧凑性 */

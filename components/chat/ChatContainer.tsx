@@ -37,8 +37,8 @@ export default function ChatContainer({
     onResetConversation,
 }: ChatContainerProps) {
     return (
-        <main className="flex h-full flex-1 flex-col overflow-hidden text-[var(--charcoal-700)]">
-            <header className="sticky top-0 z-20  border-[var(--caramel-500)] bg-[color:var(--paper-100)]/0 px-4 py-3 backdrop-blur">
+        <main className="flex h-full flex-1 flex-col overflow-hidden text-var(--charcoal-700)">
+            <header className="sticky top-0 z-20  border-var(--caramel-500) bg-color:var(--paper-100)/0 px-4 py-3 backdrop-blur">
                 <div className="mx-auto flex w-full max-w-2xl items-center justify-between">
                 </div>
             </header>

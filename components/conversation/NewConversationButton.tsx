@@ -8,7 +8,7 @@ export function NewConversationButton({ onClick }: NewConversationButtonProps) {
     return (
         <button
             onClick={onClick}
-            className="flex items-center gap-2 px-3 py-2 rounded-lg bg-[var(--caramel-500)] text-white hover:bg-[var(--caramel-600)] transition-colors"
+            className="flex items-center gap-2 px-3 py-2 rounded-lg bg-var(--caramel-500) text-white hover:bg-var(--caramel-600) transition-colors"
         >
             <svg
                 xmlns="http://www.w3.org/2000/svg"

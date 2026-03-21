@@ -114,7 +114,7 @@ export function MessageList({
                 {error && !isLoading && (
                     <div className="flex w-full justify-start gap-3">
                         {/* 1. 左侧图标保持不变 */}
-                        <div className="flex-shrink-0 w-8 h-8 rounded-full bg-red-500/10 flex items-center justify-center">
+                        <div className="flex-shrink:0 w-8 h-8 rounded-full bg-red-500/10 flex items-center justify-center">
                             <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-red-500">
                                 <circle cx="12" cy="12" r="10"></circle>
                                 <line x1="12" y1="8" x2="12" y2="12"></line>
