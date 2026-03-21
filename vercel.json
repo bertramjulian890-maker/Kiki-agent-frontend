@@ -2,7 +2,7 @@
     "rewrites": [
         {
             "source": "/api-proxy/:path*",
-            "destination": "https://kiki-agent-backend.onrender.com/api/v1/:path*"
+            "destination": "https://kiki-agent-backend.onrender.com/:path*"
         }
     ]
 }
