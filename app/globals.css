@@ -30,6 +30,11 @@
     --color-fav-5: var(--fav-5);
     --color-fav-6: var(--fav-6);
     --color-fav-7: var(--fav-7);
+
+    --color-book-cover: var(--book-cover);
+    --color-book-pages: var(--book-pages);
+    --color-bookmark: var(--bookmark);
+    --color-book-spine: var(--book-spine);
 }
 
 @keyframes breath {
@@ -70,6 +75,12 @@
 
     /* 💡 默认模式：Hero 文本颜色 (砖红) */
     --hero-text: var(--caramel-500);
+
+    /* 新增：书本相关颜色 */
+    --book-cover: var(--caramel-500); /* 红色皮质封皮 */
+    --book-pages: var(--paper-50); /* 书页底色 */
+    --bookmark: #F4EBD9; /* 更黄一点的书签色 */
+    --book-spine: rgba(0, 0, 0, 0.08); /* 书脊/中缝阴影 */
 }
 
 .dark {
@@ -84,6 +95,12 @@
 
     /* 💡 夜间模式：Hero 文本颜色 (--fav-1) */
     --hero-text: #379CB6;
+
+    /* 夜间模式：书本相关颜色 */
+    --book-cover: #5A1212; /* 深红色封皮 */
+    --book-pages: var(--paper-100);
+    --bookmark: #3D3526; /* 暗黄书签 */
+    --book-spine: rgba(0, 0, 0, 0.4);
 }
 
 * {
@@ -101,9 +118,10 @@ body {
     height: 100%;
     overflow: hidden;
     font-family: "MyRetroSerif", serif;
-    background-color: var(--paper-50);
+    /* 背景色改为书皮色，带有一点点皮质纹理效果 */
+    background-color: var(--book-cover);
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.08'/%3E%3C/svg%3E");
     color: var(--charcoal-700);
-    /* 取消繁杂元素，保留极致纯净背景 */
     background-attachment: fixed;
     overscroll-behavior-y: none;
     -webkit-font-smoothing: antialiased;

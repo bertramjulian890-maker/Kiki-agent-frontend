@@ -57,7 +57,7 @@ export default function Page() {
         if (!currentConversation) return;
         if (isLoading) return;
         updateConversationMessages(currentConversation.id, messages);
-    }, [messages, isLoading, currentConversation?.id, updateConversationMessages]);
+    }, [messages, isLoading, currentConversation, updateConversationMessages]);
 
     const handleCreateConversation = () => {
         createConversation();
