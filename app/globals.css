@@ -114,3 +114,31 @@ body {
     width: 0px;
     background: transparent;
 }
+
+/* 皮质书封底座 */
+.bg-leather {
+    background-color: #B32428;
+    position: relative;
+}
+
+.bg-leather::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    opacity: 0.4;
+    mix-blend-mode: overlay;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+    pointer-events: none;
+    z-index: 0;
+}
+
+/* 顶部书页纸边厚度效果 (天头) */
+.book-top-edge {
+    box-shadow: inset 0 1px 0 rgba(0,0,0,0.05),
+                0 -1px 0 var(--paper-200),
+                0 -2px 0 var(--paper-50),
+                0 -3px 0 var(--paper-300),
+                0 -4px 0 var(--paper-50),
+                0 -5px 0 var(--paper-200),
+                0 -6px 0 var(--paper-100);
+}
