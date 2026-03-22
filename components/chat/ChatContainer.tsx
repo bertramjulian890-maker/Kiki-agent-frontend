@@ -29,13 +29,12 @@ export default function ChatContainer({
     onRegenerateMessage,
     onDeleteMessage,
     onEditMessage,
-    onResetConversation,
 }: ChatContainerProps) {
     return (
         <div className="relative flex h-full flex-1 flex-col overflow-hidden text-(--charcoal-700)">
             {/* 消息滚动区 */}
-            <section className="min-h-0 flex-1 overflow-y-auto overflow-x-hidden custom-scrollbar">
-                <div className="mx-auto w-full max-w-3xl px-4 py-8 pb-32">
+            <section className="min-h-0 flex-1 overflow-y-auto overflow-x-hidden custom-scrollbar pb-32">
+                <div className="mx-auto w-full max-w-3xl px-4 py-8 pb-10">
                     <MessageList
                         messages={messages}
                         isLoading={isLoading}
@@ -50,8 +49,8 @@ export default function ChatContainer({
             </section>
 
             {/* 输入框定位 */}
-            <footer className="absolute bottom-8 left-0 right-0 px-4 z-10 pointer-events-none">
-                <div className="mx-auto max-w-3xl pointer-events-auto">
+            <footer className="absolute bottom-2 md:bottom-6 left-0 right-0 px-4 z-10 pointer-events-none">
+                <div className="mx-auto max-w-3xl pointer-events-auto transition-transform duration-300">
                     <ChatInput
                         isLoading={isLoading}
                         onSend={onSend}

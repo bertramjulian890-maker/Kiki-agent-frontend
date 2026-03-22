@@ -46,8 +46,19 @@ export function ChatInput({
     };
 
     return (
-        <div className="pb-6 relative w-full flex justify-center drop-shadow-[0_12px_44px_rgba(0,0,0,0.06)]">
-            <div className="w-full flex items-end gap-3 rounded-[32px] bg-(--paper-50)/95 border border-[rgba(248,245,238,0.3)] backdrop-blur-md p-2 pl-4 transition-all">
+        <div className="pb-6 relative w-full flex justify-center drop-shadow-[0_20px_40px_rgba(0,0,0,0.15)]">
+            {/* 书签主体 */}
+            <div className="w-full flex items-end gap-3 bg-(--bookmark) border border-black/10 backdrop-blur-md p-3 pl-5 transition-all
+                rounded-md shadow-lg"
+                 style={{
+                     // 给书签添加一点纸张纹理
+                     backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.05'/%3E%3C/svg%3E")`
+                 }}
+            >
+                {/* 装饰性丝带/孔 (可选) */}
+                <div className="absolute -top-3 left-1/2 -translate-x-1/2 w-8 h-4 bg-(--bookmark) border-x border-t border-black/10 rounded-t-md flex justify-center items-center shadow-sm">
+                    <div className="w-2 h-2 rounded-full bg-black/20" />
+                </div>
 
                 <textarea
                     ref={textareaRef}
